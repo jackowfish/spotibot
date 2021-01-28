@@ -10,9 +10,9 @@ scope = 'playlist-modify-public'
 gm_token = 'cqIRkGeAfRFZCcQyCM5WPTl2ImHj8SRY45ozCrlV'
 gm_url = 'https://api.groupme.com/v3'
 SPOTIPY_CLIENT_ID = '56153466382340898b836bdbf32f22c7'
-SPOTIPY_CLIENT_SECRET = 'c8b3311e66a947ae9bcd27cfe10ee692' 
-playlist_id = '1PgtDtgBi6LDzR3fB4ZSwR'
-auth_token = 'BQDZVZREDac2H0Fgby6P06dtFz7gSj2A1hKPUSP5Gbn-DaOYEVtQMvk7GeA-bZeXOESvZ1HBlxjQSxV8OzlzWAvXyiZlwKd-wB7KCdf3UL8Cu3MvpQH83432jYfo6icL9uddTWjmNy_9hpSHQmmWYWd8KMBooSx0rBekqH77H7hPPiO71LijjJm12SFrw3bwXRSc-FOsf2LPGl5E1zyJfRVI9VJkpBWeaBju29w7HAkpzxzMSqvcknpX_pcgRpgMlzuT_OstzohHZyH6w6Wl'
+SPOTIPY_CLIENT_SECRET = '' 
+playlist_id = '1PgtDtgBBQDZVZREDac2H0Fgby6P06dtFz7gSj2A1hKPUSP5Gbni6LDzR3fB4ZSwR'
+auth_token = ''
 pp = pprint.PrettyPrinter(indent=2)
 auth_manager = SpotifyClientCredentials(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
 spotify = spotipy.Spotify(auth_manager=auth_manager)
@@ -73,7 +73,7 @@ def addSongsToPlaylist(playlist_id, id_list):
 def addSongsWithAuth(auth_token, playlist_id, songs):
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     headers = {
-      'Authorization': 'Bearer BQDZVZREDac2H0Fgby6P06dtFz7gSj2A1hKPUSP5Gbn-DaOYEVtQMvk7GeA-bZeXOESvZ1HBlxjQSxV8OzlzWAvXyiZlwKd-wB7KCdf3UL8Cu3MvpQH83432jYfo6icL9uddTWjmNy_9hpSHQmmWYWd8KMBooSx0rBekqH77H7hPPiO71LijjJm12SFrw3bwXRSc-FOsf2LPGl5E1zyJfRVI9VJkpBWeaBju29w7HAkpzxzMSqvcknpX_pcgRpgMlzuT_OstzohHZyH6w6Wl'
+      'Authorization': 'Bearer ''
     }
     params = {
         'uris':songs
