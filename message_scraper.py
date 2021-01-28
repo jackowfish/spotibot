@@ -1,21 +1,35 @@
 import requests
 import json
 import pprint
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-from spotipy.oauth2 import SpotifyClientCredentials
 
-scope = 'playlist-modify-public'
-
+#insert groupMe Token
 gm_token = 'cqIRkGeAfRFZCcQyCM5WPTl2ImHj8SRY45ozCrlV'
 gm_url = 'https://api.groupme.com/v3'
-SPOTIPY_CLIENT_ID = '56153466382340898b836bdbf32f22c7'
-SPOTIPY_CLIENT_SECRET = '' 
+#insert spotify client ID
+SPOTIFY_CLIENT_ID = '56153466382340898b836bdbf32f22c7'
+# Insert Playlist ID
 playlist_id = '1PgtDtgBBQDZVZREDac2H0Fgby6P06dtFz7gSj2A1hKPUSP5Gbni6LDzR3fB4ZSwR'
+# Insert Bearer Auth Token
 auth_token = ''
+# Insert GroupMe Group ID (can use the getGroups function to find this)
+group_id = ''
 pp = pprint.PrettyPrinter(indent=2)
-auth_manager = SpotifyClientCredentials(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
-spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+def getGroups():
+    response = requests.get(
+        f"{gm_url}/groups", 
+        params = {
+            'token': gm_token,
+            'per_page': 500
+        }
+    )
+    response = response.json()
+    response = response.get('response')
+    group_dict = {}
+    for group in response:
+        group_dict.update({group.get('name') : group.get('id')})
+    pp.pprint(group_dict)
+#     return group_dict
 
 def getMessages(message_dict, group_id, last_msg_id = None, run = False):
     response = requests.get(
@@ -46,34 +60,15 @@ def getMessages(message_dict, group_id, last_msg_id = None, run = False):
         return None
     # return response
 
-def getGroups():
-    response = requests.get(
-        f"{gm_url}/groups", 
-        params = {
-            'token': gm_token,
-            'per_page': 500
-        }
-    )
-    response = response.json()
-    response = response.get('response')
-    group_dict = {}
-    for group in response:
-        group_dict.update({group.get('name') : group.get('id')})
-    pp.pprint(group_dict)
-#     return group_dict
-
-def getSong(id):
-    results = spotify.track(id)
-    print(results)
 
 def addSongsToPlaylist(playlist_id, id_list):
-    for songs in chunker(song_ids, 10):
-    pp.pprint(addSongsWithAuth(auth_token, playlist_id, songs))
+    for songs in chunker(id_list, 10):
+        pp.pprint(addSongsWithAuth(auth_token, playlist_id, songs))
 
 def addSongsWithAuth(auth_token, playlist_id, songs):
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     headers = {
-      'Authorization': 'Bearer ''
+      'Authorization': f"Bearer {auth_token}"
     }
     params = {
         'uris':songs
@@ -95,15 +90,9 @@ def getIDs(message_dict):
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-def spotify_auth():
-    response = requests.get(
-        "ttps://accounts.spotify.com/authorize", 
-        params = {
-            'client_id': SPOTIPY_CLIENT_ID,
-            'response_type': 'code',
-            'redirect_uri': 'http://localhost:8888',
-            'scope': 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative'
-        }
-    )
-    response = response.json()
-    pp.pprint(response)
+# Run main and insert group ID to add songs to playlist
+def main(group_id):
+    message_dict = {}
+    getMessages(message_dict, group_id)
+    song_ids = getIDs(message_dict)
+    addSongsToPlaylist(playlist_id, song_ids)
