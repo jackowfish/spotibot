@@ -1,7 +1,7 @@
 import {Button, Image, Container, Col, Row} from 'react-bootstrap';
 import './App.css'
 import logo from './images/Spotibot.png'
-import GroupMeLogin from './GroupMe.js'
+import {GroupMeLogin, getGroupMeGroups} from './GroupMe.js'
 
 function App() {
   let url = window.location.href;
@@ -10,7 +10,8 @@ function App() {
     accessToken = url.split('=')[1]
   }
   if(accessToken !== '') {
-    console.log(accessToken);
+    let data = getGroupMeGroups(accessToken);
+    console.log(data);
   }
   return (
     <div className="App">
