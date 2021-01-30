@@ -1,8 +1,8 @@
 import {Button, Image, Container, Col, Row} from 'react-bootstrap';
 import './App.css'
 import logo from './images/Spotibot.png'
-import {GroupMeLogin, getGroupMeGroups} from './GroupMe.js'
-import {SpotifyLogin} from './Spotify.js'
+import {GroupMeLogin, getGroupMeGroups} from './scripts/GroupMe.js'
+import {SpotifyLogin} from './scripts/Spotify.js'
 import Cookies from 'universal-cookie';
 
 function App() {
@@ -18,13 +18,12 @@ function App() {
     code = url.split('=')[1]
     cookies.set('SpotifyCode', code, { path: '/' });
   }
-  console.log('GM Access Token:');
-  console.log(cookies.get('GMAccessToken'));
-  console.log('Spotify Access Code:');
-  console.log(cookies.get('SpotifyCode'));
-  if(cookies.get('GMAccessToken') !== undefined) {
-    let data = getGroupMeGroups(accessToken);
-    console.log(data);
+  if(cookies.get('SpotifyCode') && cookies.get('GMAccessToken')) {
+    console.log('GM Access Token:');
+    console.log(cookies.get('GMAccessToken'));
+    console.log('Spotify Access Code:');
+    console.log(cookies.get('SpotifyCode'));
+    window.location.href = '/groups'
   }
   return (
     <div className="App">
@@ -38,12 +37,12 @@ function App() {
           </div>
         </Row>
          <Row style={{justifyContent:'center'}}>
-          <Button variant="info" size="lg" block style={{width: '30vh'}} onClick={() => {GroupMeLogin()}}>
+          <Button variant="info" size="lg" block style={{width: '30vh', opacity: 0.9}} onClick={() => {GroupMeLogin()}}>
             GroupMe Login
           </Button>
          </Row>
          <Row style={{justifyContent:'center', paddingTop:'20px'}}>
-          <Button variant="success" size="lg" block style={{width: '30vh'}} onClick={() => {SpotifyLogin()}}>
+          <Button variant="success" size="lg" block style={{width: '30vh', opacity: 0.9}} onClick={() => {SpotifyLogin()}}>
             Spotify Login
           </Button>
          </Row>
