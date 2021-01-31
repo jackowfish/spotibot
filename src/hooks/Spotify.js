@@ -9,5 +9,4 @@ export let SpotifyLogin = () => {
     (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
     '&redirect_uri=' + encodeURIComponent(REDIRECT_URI);
 }
-
 export default SpotifyLogin;

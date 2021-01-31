@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import GroupPicker from './GroupPicker'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,11 +15,8 @@ ReactDOM.render(
   <React.StrictMode>
   <Router>
     <Switch>
-          <Route path="/groups">
-            <GroupPicker />
-          </Route>
           <Route path="/">
-            <App />
+            <App/>
           </Route>
         </Switch>
     </Router>
