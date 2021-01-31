@@ -1,8 +1,8 @@
 import {Button, ListGroup, Image, Container, Col, Row, Jumbotron, Dropdown} from 'react-bootstrap';
-import './GroupPicker.css'
-import logo from './images/Spotibot.png'
+import './GroupPicker.css';
+import logo from './images/Spotibot.png';
 
-let GroupPicker = ({groups}) => {
+let GroupPicker = ({groups, groupIDSender = () => {}, playlistMadeSender = () => {}}) => {
   if(! groups) {
     return (
       <div className="App">
@@ -45,6 +45,10 @@ let GroupPicker = ({groups}) => {
     return 0;
   });
 
+  // let handleGroupSelect = (id) => {
+  //   groupIDSender(id);
+  // }
+
   let GroupList = () => {
     return (
       <Dropdown>
@@ -54,7 +58,10 @@ let GroupPicker = ({groups}) => {
         <Dropdown.Menu>
           {groupArr.map(item => (
               <div>
-                <Dropdown.Item key={item[0]}>{item[1]}</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {
+                  groupIDSender(item[0]);
+                  playlistMadeSender(false);
+                }} key={item[0]}>{item[1]}</Dropdown.Item>
               </div>
             ))}
         </Dropdown.Menu>

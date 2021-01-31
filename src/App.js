@@ -1,10 +1,11 @@
 import {Button, Image, Container, Col, Row} from 'react-bootstrap';
 import './App.css'
 import logo from './images/Spotibot.png'
-import {GroupMeLogin, useGroups} from './hooks/GroupMe.js'
+import {GroupMeLogin, useGroups, useMessages} from './hooks/GroupMe.js'
 import {SpotifyLogin} from './hooks/Spotify.js'
 import GroupPicker from './GroupPicker.js'
 import Cookies from 'universal-cookie';
+import React from 'react';
 
 function App() {
   let url = window.location.href;
@@ -22,18 +23,43 @@ function App() {
   }
 
   const groups = useGroups(cookies.get('GMAccessToken'));
-  
+  const [groupID, setGroupID] = React.useState(null); // the lifted state
+  const messages = useMessages(cookies.get('GMAccessToken'), groupID);
+  const [spotifyPlaylistMade, setSpotifyPlaylistMade]  = React.useState(null);
+
+  const groupIDSender = (id) => { 
+    setGroupID(id);
+  };
+
+  const playlistMadeSender = (bool) => {
+    setSpotifyPlaylistMade(bool);
+  }
+
+
   let gmButtonText = !cookies.get('GMAccessToken') ? 'GroupMe Login' : 'GroupMe Logged In!'
   let spotifyButtonText = !cookies.get('SpotifyCode') ? 'Spotify Login' : 'Spotify Logged In!'
 
   if(cookies.get('SpotifyCode') && cookies.get('GMAccessToken')) {
-    console.log('GM Access Token:');
-    console.log(cookies.get('GMAccessToken'));
-    console.log('Spotify Access Code:');
-    console.log(cookies.get('SpotifyCode'));
-    return (
-      <GroupPicker groups={groups}/>
-    );
+    // console.log('GM Access Token:');
+    // console.log(cookies.get('GMAccessToken'));
+    // console.log('Spotify Access Code:');
+    // console.log(cookies.get('SpotifyCode'));
+    // if(messages === null) {
+      if (messages !== null && messages.meta.code === 200 && spotifyPlaylistMade === false) {
+        let messageData = messages.response.messages;
+        let messageTexts = [];
+        for(let i = 0; i < messageData.length; i++) {
+          if(String(messageData[i].text).includes('open.spotify.com/track/')) {
+            messageTexts.push(messageData[i].text)
+          }
+        }
+        console.log(messageTexts);
+        setSpotifyPlaylistMade(true);
+      }
+      return (
+        <GroupPicker groups={groups} groupIDSender={groupIDSender} playlistMadeSender={playlistMadeSender}/>
+      );
+    // }
   } else {
     return (
       <div className="App">

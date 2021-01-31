@@ -2,11 +2,11 @@ import { useRef, useState, useEffect } from 'react';
 const GROUPME_CLIENT = 'Nf3qXOSjWPCO7vncXGeu8s5OD0ga2bjzBEdNAw16VuYK4vwt';
 const GROUPME_URL = 'https://api.groupme.com/v3'
 
-export let GroupMeLogin = () => {
+export const GroupMeLogin = () => {
     window.location.href = "https://oauth.groupme.com/oauth/authorize?client_id=" + GROUPME_CLIENT;
 }
 
-let getGroups = async (accessToken) => {
+const getGroups = async (accessToken) => {
     return fetch(GROUPME_URL + '/groups?token=' + accessToken + '&omit=memberships&per_page=300', {
         method: 'GET',
         mode: 'cors'
@@ -32,11 +32,17 @@ export const useGroups = (accessToken) => {
     return groups;
 }
 
-let getMessages = async (accessToken, groupID) => {
-    return fetch(GROUPME_URL + '/groups/' + groupID + '/messages?token=' + accessToken + '&limit=100', {
+const getMessages = async (accessToken, groupID, afterID = null) => {
+    let idParam = afterID ? '&after_id=' + afterID : '';
+    return fetch(GROUPME_URL + '/groups/' + groupID + '/messages?token=' + accessToken + '&limit=100' + idParam, {
         method: 'GET',
         mode: 'cors'
     }).then(response => response.json()).then(data => {
+        if(data.response !== undefined && data.meta.code === 200 && data.response.messages.length === 100) {
+            afterID = data.response.messages[99].id;
+            console.log({afterID})
+            return getMessages(accessToken, groupID, afterID);
+        }
         return data;
     });
 };
@@ -57,15 +63,6 @@ export const useMessages = (accessToken, groupID) => {
     }, [accessToken, groupID])
     return messages;
 }
-// export let getGroupMeGroups = async (accessToken) => {
-//     let groups = [];
-//     fetch(GROUPME_URL + '/groups?token=' + accessToken, {
-//         method: 'GET',
-//         mode: 'cors'
-//     })
-//     .then(response => response.json())
-//     .then(data => {groups = data.response; console.log(data.response)});
-//     return groups;
-// }
+ 
 
 export default GroupMeLogin
