@@ -45,12 +45,11 @@ function App() {
     // console.log('Spotify Access Code:');
     // console.log(cookies.get('SpotifyCode'));
     // if(messages === null) {
-      if (messages !== null && messages.meta.code === 200 && spotifyPlaylistMade === false) {
-        let messageData = messages.response.messages;
+      if (messages !== null && spotifyPlaylistMade === false) {
         let messageTexts = [];
-        for(let i = 0; i < messageData.length; i++) {
-          if(String(messageData[i].text).includes('open.spotify.com/track/')) {
-            messageTexts.push(messageData[i].text)
+        for(let i = 0; i < messages.length; i++) {
+          if(String(messages[i].text).includes('open.spotify.com/track/')) {
+            messageTexts.push(messages[i].text)
           }
         }
         console.log(messageTexts);

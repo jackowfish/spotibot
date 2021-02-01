@@ -32,7 +32,7 @@ export const useGroups = (accessToken) => {
     return groups;
 }
 
-const getMessages = async (accessToken, groupID, afterID = null) => {
+const getMessages = async (accessToken, groupID, afterID = null, messages = []) => {
     let idParam = afterID ? '&after_id=' + afterID : '';
     return fetch(GROUPME_URL + '/groups/' + groupID + '/messages?token=' + accessToken + '&limit=100' + idParam, {
         method: 'GET',
@@ -40,10 +40,10 @@ const getMessages = async (accessToken, groupID, afterID = null) => {
     }).then(response => response.json()).then(data => {
         if(data.response !== undefined && data.meta.code === 200 && data.response.messages.length === 100) {
             afterID = data.response.messages[99].id;
-            console.log({afterID})
-            return getMessages(accessToken, groupID, afterID);
+            messages.push(data.response.messages);
+            return getMessages(accessToken, groupID, afterID, messages);
         }
-        return data;
+        return messages;
     });
 };
 
@@ -60,7 +60,7 @@ export const useMessages = (accessToken, groupID) => {
             }
             getAndSetMessages();
         }
-    }, [accessToken, groupID])
+    }, [groupID])
     return messages;
 }
  
