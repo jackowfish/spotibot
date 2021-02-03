@@ -32,36 +32,49 @@ export const useGroups = (accessToken) => {
     return groups;
 }
 
-const getMessages = async (accessToken, groupID, afterID = null, messages = []) => {
-    let idParam = afterID ? '&after_id=' + afterID : '';
+const getMessages = async (accessToken, groupID, beforeID = null, messages = [], count = 0) => {
+    let idParam = beforeID ? '&before_id=' + beforeID : '';
     return fetch(GROUPME_URL + '/groups/' + groupID + '/messages?token=' + accessToken + '&limit=100' + idParam, {
         method: 'GET',
         mode: 'cors'
     }).then(response => response.json()).then(data => {
         if(data.response !== undefined && data.meta.code === 200 && data.response.messages.length === 100) {
-            afterID = data.response.messages[99].id;
+            beforeID = data.response.messages[0].id;
+            console.log("one: " + count);
             messages.push(data.response.messages);
-            return getMessages(accessToken, groupID, afterID, messages);
+            return getMessages(accessToken, groupID, beforeID, messages, count += 1);
+        } else if (data.response !== undefined && data.meta.code === 200 && data.response.messages.length < 100) {
+            messages.push(data.response.messages);
+            console.log("two: " + count);
+            return messages;
+        } else if (data.meta.code !== 200) {
+            console.log("three: " + count);
+            return messages;
+        } else {
+            console.log("four: " + count);
+            return messages;
         }
-        return messages;
     });
 };
 
 export const useMessages = (accessToken, groupID) => {
     const [messages, setMessages] = useState(null);
-    const loaded = useRef(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        if (!loaded.current) {
         const getAndSetMessages = async () => {
-                const fetchedMessages = await getMessages(accessToken, groupID);
-                setMessages(fetchedMessages);
-                // Commented out so daycards reload when requested.
-                // loaded.current = true;
+            try {
+                setLoading(true);
+                const messages = await getMessages(accessToken, groupID);
+                setMessages(messages);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+                console.log(error);
             }
-            getAndSetMessages();
         }
+        getAndSetMessages();
     }, [groupID])
-    return messages;
+    return [messages, loading];
 }
  
 
